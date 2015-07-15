@@ -4,6 +4,8 @@ namespace TD\Controllers;
 use TD\Engine\APIHelper;
 use TD\Engine\Application;
 use TD\Engine\Auth;
+use TD\Engine\Logger;
+use TD\Exceptions\ApplicationException;
 use TD\Models\Task;
 
 /**
@@ -24,12 +26,7 @@ class TaskController extends Controller
      */
     public function actionIndex()
     {
-        if (!Auth::identify($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'])) {
-            header('WWW-Authenticate: Basic realm="Bad auth"');
-            header('HTTP/1.0 401 Unauthorized');
-            echo 'You press cancel';
-            exit;
-        }
+        Auth::check($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
         $this->render('index', [
             'tasks' => Application::$db->findAll('task')
         ]);
@@ -44,11 +41,43 @@ class TaskController extends Controller
     {
         $task = new Task();
         $task->setAttributes($_POST['Task']);
+        $task->parseDeadline();
+
         if ($task->validate()) {
             $task->save();
-            APIHelper::success($task);
+            $this->render('task', ['task' => $task]);
         } else {
             APIHelper::error(400, $task->getErrors());
         }
+    }
+
+    /**
+     * Редактирует запись
+     *
+     * @throws ApplicationException
+     */
+    public function actionEdit()
+    {
+        /**
+         * @var Task $task
+         */
+        $task = Application::$db->findByPk('task', $_POST['Task']['id']);
+        if (empty($task)) {
+            throw new ApplicationException(404);
+        }
+        $task->setAttributes($_POST['Task']);
+        $task->parseDeadline();
+        if ($task->validate()) {
+            $task->update();
+            $this->render('task', ['task' => $task]);
+        } else {
+            APIHelper::error(400, $task->getErrors());
+        }
+    }
+
+    public function remove()
+    {
+        Application::$db->remove('task', $_POST['id']);
+        APIHelper::success();
     }
 }

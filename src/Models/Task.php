@@ -7,6 +7,12 @@ namespace TD\Models;
 
 class Task extends Model
 {
+
+    /**
+     * @var int ID
+     */
+    public $id;
+
     /**
      * @var string название задачи
      */
@@ -42,16 +48,23 @@ class Task extends Model
     public function beforeSave()
     {
         parent::beforeSave();
-        $this->deadline = $this->deadline / 1000;
     }
 
     /**
-     * Возвращает дедлайн в формате времени
+     * Возвращает дедлайн в формате d-m-Y
      *
      * @return string
      */
     public function getDeadline()
     {
         return date('d-m-Y', $this->deadline);
+    }
+
+    /**
+     * Преобразовывает строчку даты в секунды
+     */
+    public function parseDeadline()
+    {
+        $this->deadline = (new \DateTime($this->deadline))->getTimestamp() + 1000;
     }
 }

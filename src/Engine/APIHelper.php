@@ -13,7 +13,7 @@ class APIHelper
      *
      * @param mixed $data Тело ответа
      */
-    public static function success($data)
+    public static function success($data = ['status' => 'OK'])
     {
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
     }

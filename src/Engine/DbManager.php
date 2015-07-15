@@ -17,7 +17,7 @@ class DbManager
             'mysql:host=localhost;dbname=' . $dbName,
             $username,
             $password,
-            array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
+            [PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"]
         );
     }
 
@@ -51,7 +51,9 @@ class DbManager
         $sql = 'SELECT * FROM ' . $tableName . ' WHERE id = ?';
         $sth = $this->connection->prepare($sql);
         $sth->execute([$id]);
-        return $sth->fetch(PDO::FETCH_ASSOC);
+        $result = $sth->fetchAll(PDO::FETCH_CLASS, $this->getClassName(ucfirst($tableName)));
+
+        return $result[0];
     }
 
     /**
@@ -59,6 +61,8 @@ class DbManager
      *
      * @param string $tableName Название таблицы
      * @param array  $data      Ассоициативный массив для записи
+     *
+     * @return int ID записи
      */
     public function insert($tableName, $data)
     {
@@ -66,13 +70,39 @@ class DbManager
         $fieldlist = implode(',', $fields);
         $values    = array_values($data);
         $qs        = str_repeat("?,", count($fields) - 1);
-        $sql       = 'INSERT INTO ' . $tableName . ' (' . $fieldlist . ') VALUES(' . $qs . '?)';
-        $sth       = $this->connection->prepare($sql);
-        Logger::getInstance()->info($sql);
-        Logger::getInstance()->info($values);
-        Logger::getInstance()->info($fieldlist);
-        Logger::getInstance()->info($qs);
+
+        $sql = 'INSERT INTO ' . $tableName . ' (' . $fieldlist . ') VALUES(' . $qs . '?)';
+        $sth = $this->connection->prepare($sql);
         $sth->execute($values);
+        return $this->connection->lastInsertId();
+    }
+
+    public function update($tableName, $data)
+    {
+        $id = $data['id'];
+        unset($data['id']);
+        $fields = array_keys($data);
+        $values = array_values($data);
+        for ($i = 0, $len = sizeof($fields); $i < $len; $i++) {
+            $fields[$i] = $fields[$i] . '=?';
+        }
+        $sql = 'UPDATE ' . $tableName . ' SET ' . implode(',', $fields) . ' WHERE id=?';
+        $sth = $this->connection->prepare($sql);
+        $sth->execute(array_merge($values, [$id]));
+
+    }
+
+    /**
+     * Удаляет запись
+     *
+     * @param string $tableName Название таблицы
+     * @param int    $id        ID записи
+     */
+    public function remove($tableName, $id)
+    {
+        $sql = 'DELETE from ' . $tableName . ' WHERE id=?';
+        $sth = $this->connection->prepare($sql);
+        $sth->execute([$id]);
     }
 
     /**

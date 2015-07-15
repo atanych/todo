@@ -62,8 +62,6 @@ abstract class Model
                 case self::VALIDATOR_INT:
                     for ($j = 0, $lenn = sizeof($fields); $j < $lenn; $j++) {
                         $fields[$j] = trim($fields[$j]);
-                        Logger::getInstance()->error($fields[$j]);
-                        Logger::getInstance()->error($this->$fields[$j]);
                         if (!ctype_digit($this->$fields[$j])) {
                             $this->errors[] = 'Поле ' . $fields[$j] . ' должно быть числом';
                         }
@@ -72,8 +70,6 @@ abstract class Model
                 default:
                     throw new ApplicationException(500, 'Валидатор ' . $row['validator'] . ' не известен');
             }
-            Logger::getInstance()->info($this->errors);
-//            Logger::getInstance()->info($fields);
         }
         if (empty($this->errors)) {
             return true;
@@ -84,12 +80,28 @@ abstract class Model
 
     /**
      * Сохраняет модель
+     *
+     * @return $this
      */
     public function save()
     {
         $this->beforeSave();
+
         $reflectionClass = new \ReflectionClass($this);
-        Application::$db->insert(strtolower($reflectionClass->getShortName()), $this->asArray());
+        $this->id        = Application::$db->insert(strtolower($reflectionClass->getShortName()), $this->asArray());
+        return $this;
+    }
+
+    /**
+     * Изменяет модель
+     *
+     * @return $this
+     */
+    public function update()
+    {
+        $reflectionClass = new \ReflectionClass($this);
+        Application::$db->update(strtolower($reflectionClass->getShortName()), $this->asArray());
+        return $this;
     }
 
     /**

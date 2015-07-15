@@ -50,7 +50,6 @@ abstract class Controller
     public function render($name, $data = null)
     {
         $view = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . $name . '.php';
-        Logger::getInstance()->info($view);
         if (file_exists($view)) {
             if (is_array($data)) {
                 extract($data, EXTR_PREFIX_SAME, 'data');
