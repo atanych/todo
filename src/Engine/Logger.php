@@ -17,7 +17,7 @@ class Logger
     const LEVEL_INFO        = 'INFO';
     const LEVEL_DEBUG       = 'DEBUG';
     const LEVEL_ERROR       = 'ERROR';
-    const DEFAULT_FILE_PATH = '/log/app.log';
+    const DEFAULT_FILE_PATH = '/../log/app.log';
 
 
     private $file;
@@ -33,7 +33,7 @@ class Logger
 
     /**
      * Возвращает единственный экземпляр класса
-     * @todo возможно не самый лучший вариант для SingleTone
+     * @todo возможно не самый лучший вариант для Singleton
      *
      * @return Logger
      */
