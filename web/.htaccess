@@ -1,0 +1,26 @@
+Options +FollowSymLinks
+IndexIgnore */*
+RewriteEngine On
+
+# Force HTTPS for /my
+RewriteCond %{HTTPS} !=on
+RewriteCond %{THE_REQUEST} ^[A-Z]+\s/api/v[\d]+/security [NC]
+RewriteRule ^(api/v[\d]+/security) https://%{HTTP_HOST}%{REQUEST_URI} [NC,R=301,L]
+
+
+# Force HTTP for anything which isn't /my
+RewriteCond %{HTTPS} =on
+RewriteCond %{THE_REQUEST} !^[A-Z]+\s/api/v[\d]+/security [NC]
+RewriteRule !^/api/v[\d]+/security http://%{HTTP_HOST}%{REQUEST_URI} [NC,R=301,L]
+
+# Remove index.php from URLs
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /index.php/$1
+
+
+ <IfModule mod_security.c>
+SecFilterEngine On
+SetEnvIfNoCase Remote_Addr ^217\.20\.145\.18$ MODSEC_ENABLE=Off
+SetEnvIfNoCase Remote_Addr ^217\.20\.145\.17$ MODSEC_ENABLE=Off
+</IfModule>

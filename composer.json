@@ -1,0 +1,13 @@
+{
+  "name": "atanych/todo",
+  "type": "sdk",
+  "description": "Тестовое задание для sms-vote.ru",
+  "require": {
+    "php": ">=5.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "TD\\": "web\\src"
+    }
+  }
+}
