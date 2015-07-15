@@ -37,8 +37,27 @@ abstract class Controller
             } else {
                 throw new ApplicationException(404);
             }
-            Logger::getInstance()->info($this);
-            Logger::getInstance()->info(get_called_class());
+        }
+    }
+
+    /**
+     * Рендерит шаблон
+     *
+     * @param string $name Имя шаблона
+     *
+     * @throws ApplicationException
+     */
+    public function render($name, $data = null)
+    {
+        $view = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . $name . '.php';
+        Logger::getInstance()->info($view);
+        if (file_exists($view)) {
+            if (is_array($data)) {
+                extract($data, EXTR_PREFIX_SAME, 'data');
+            }
+            require($view);
+        } else {
+            throw new ApplicationException(500, 'Представление ' . $name . ' для контроллера ' . get_called_class() . ' не найдено');
         }
     }
 }

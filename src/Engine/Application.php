@@ -10,41 +10,49 @@ use TD\Exceptions\ApplicationException;
 
 class Application
 {
-    const CONTROLLER            = 'Controller';
+    /**
+     * Постфикс контроллера
+     */
+    const CONTROLLER = 'Controller';
+    /**
+     * Namespace для всех контроллеров
+     */
     const CONTROLLER_NAME_SPACE = '\\TD\\Controllers\\';
+    /**
+     * Название контроллера, если не задано в конфигурации
+     */
+    const DEFAULT_CONTROLLER = 'site';
 
     /**
-     * @var string Контроллер по умолчанию
+     * Название действия, если не задано в конфигурации
      */
-    public $defaultController;
+    const DEFAULT_ACTION = 'index';
 
     /**
-     * @var string Действие по умолчанию
+     * @var DbManager Компомент БД
      */
-    public $defaultAction;
+    public static $db;
 
-    function __construct($config)
+    /**
+     *  Инициализирует приложение
+     *
+     * @param array $config Параметры конфигурации
+     *
+     * @throws ApplicationException
+     */
+    public static function run($config)
     {
-        // разор конфига в поля приложения
-        $this->defaultController = isset($config['defaultController']) ? $config['defaultController'] : 'site';
-        $this->defaultAction     = isset($config['defaultAction']) ? $config['defaultAction'] : 'index';
-    }
+        // инициализацию компонент
+        self::$db = new DbManager($config['db']['name'], $config['db']['username'], $config['db']['password']);
 
-
-    /**
-     * Запускает приложение
-     */
-    public function run()
-    {
-        $uri = substr($_SERVER["REQUEST_URI"], 1);
+        $uri      = substr($_SERVER["REQUEST_URI"], 1);
         if (empty($uri)) {
-            $controller = self::CONTROLLER_NAME_SPACE . ucfirst($this->defaultController) . self::CONTROLLER;
-            $action     = $this->defaultAction;
+            $controller = self::CONTROLLER_NAME_SPACE . ucfirst(isset($config['defaultController']) ? $config['defaultController'] : self::DEFAULT_CONTROLLER) . self::CONTROLLER;
+            $action     = isset($config['defaultAction']) ? $config['defaultAction'] : self::DEFAULT_ACTION;
         } else {
             $uriData    = explode('/', $uri);
             $controller = self::CONTROLLER_NAME_SPACE . ucfirst($uriData[0]) . self::CONTROLLER;
             $action     = $uriData[1];
-
         }
         /**
          * @var Controller $controllerInstance

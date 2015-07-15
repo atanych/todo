@@ -14,6 +14,7 @@ namespace TD\Engine;
 class Logger
 {
     private static $instance;
+
     const LEVEL_INFO        = 'INFO';
     const LEVEL_DEBUG       = 'DEBUG';
     const LEVEL_ERROR       = 'ERROR';
