@@ -1,7 +1,6 @@
 <?php
 namespace TD\Controllers;
 
-use TD\Engine\Logger;
 use TD\Exceptions\ApplicationException;
 
 /**

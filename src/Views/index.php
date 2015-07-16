@@ -103,37 +103,39 @@ use TD\Models\Task;
 
 <script>
 
+    /**
+     *  Менеджер задач
+     */
     function TaskManager() {
 
-        this.initialize = function () {
-            this.$modalContent = $('#modal-content');
-            this.$modal = $('#task-modal');
-            this.setEvents();
-        };
-
+        /**
+         *  Устанавливает эвенты
+         */
         this.setEvents = function () {
-            // @todo  можно использовать proxy
+            // @todo  можно было использовать proxy
             var self = this;
-            // событие на создание задачи
+            /**
+             * Событие на создание задачи
+             */
             $('#task-create').click(function () {
                     self.invokeModal({
-                            'template': '#modal-content-template',
+                            'template':     '#modal-content-template',
                             'templateData': {
                                 'data': {
                                     'title': 'Добавить задачу'
                                 }
                             },
-                            'success': function () {
+                            'success':      function () {
                                 $.ajax({
-                                    'method': 'POST',
-                                    'url': 'task/create',
-                                    'data': $('#task-modal-form').serialize(),
+                                    'method':  'POST',
+                                    'url':     'task/create',
+                                    'data':    $('#task-modal-form').serialize(),
                                     'success': function (data) {
                                         $('#tasks-global-wrapper').prepend(data);
                                         $('#task-modal').modal('hide');
                                         $('#task-modal-error').addClass('fade');
                                     },
-                                    'error': function (data) {
+                                    'error':   function (data) {
                                         console.log('e', data);
                                         $('#task-modal-error').removeClass('fade').html(data.responseJSON.join('<br/>'));
 
@@ -146,31 +148,33 @@ use TD\Models\Task;
                 }
             );
 
-            // событие на изменение задачи
+            /**
+             * Событие на изменение задачи
+             */
             $('#task-manager').on('click', '.edit-task', function () {
                 var $taskWrapper = $(this).parents('.task-wrapper');
                 self.invokeModal({
-                    'template': '#modal-content-template',
+                    'template':     '#modal-content-template',
                     'templateData': {
                         'data': {
-                            'id': $taskWrapper.data('id'),
-                            'title': 'Изменить задачу',
-                            'name': $taskWrapper.find('.task-name').text(),
-                            'deadline': $taskWrapper.find('.task-deadline').text(),
+                            'id':          $taskWrapper.data('id'),
+                            'title':       'Изменить задачу',
+                            'name':        $taskWrapper.find('.task-name').text(),
+                            'deadline':    $taskWrapper.find('.task-deadline').text(),
                             'description': $taskWrapper.find('.task-description').text()
                         }
                     },
-                    'success': function () {
+                    'success':      function () {
                         $.ajax({
-                            'method': 'POST',
-                            'url': 'task/edit',
-                            'data': $('#task-modal-form').serialize(),
+                            'method':  'POST',
+                            'url':     'task/edit',
+                            'data':    $('#task-modal-form').serialize(),
                             'success': function (data) {
                                 $taskWrapper.replaceWith(data);
                                 $('#task-modal').modal('hide');
                                 $('#task-modal-error').addClass('fade');
                             },
-                            'error': function (data) {
+                            'error':   function (data) {
                                 $('#task-modal-error').removeClass('fade').html(data.responseJSON.join('<br/>'));
 
                             }
@@ -178,21 +182,23 @@ use TD\Models\Task;
                     }
                 });
             });
-
+            /**
+             * Событие на удаление задачи
+             */
             $('#task-manager').on('click', '.remove-task', function () {
                 var $taskWrapper = $(this).parents('.task-wrapper');
                 self.invokeModal({
-                    'template': '#modal-remove-template',
+                    'template':     '#modal-remove-template',
                     'templateData': {
                         'data': {
                             'title': 'Удалить задачу'
                         }
                     },
-                    'success': function () {
+                    'success':      function () {
                         $.ajax({
-                            'method': 'POST',
-                            'url': 'task/remove',
-                            'data': {
+                            'method':  'POST',
+                            'url':     'task/remove',
+                            'data':    {
                                 'id': $taskWrapper.data('id')
                             },
                             'success': function () {
@@ -200,7 +206,7 @@ use TD\Models\Task;
                                 $('#task-modal').modal('hide');
                                 $('#task-modal-error').addClass('fade');
                             },
-                            'error': function (data) {
+                            'error':   function (data) {
                                 $('#task-modal-error').removeClass('fade').html(data.responseJSON.join('<br/>'));
 
                             }
@@ -227,16 +233,17 @@ use TD\Models\Task;
          * @params function options['success'] Функция, которая вызывается после утверждения модального окна
          */
         this.invokeModal = function (options) {
-            this.$modalContent.html(_.template($(options.template).html(), options.templateData));
+            $('#modal-content').html(_.template($(options.template).html(), options.templateData));
             this.refreshDatepicker();
             $('#task-modal-submit').off('click').on('click', options.success);
             $('#task-modal').modal();
         };
-        this.initialize();
+
+        this.setEvents();
     }
 
     $(function () {
-        var taskManager = new TaskManager();
+        new TaskManager();
     })
 </script>
 

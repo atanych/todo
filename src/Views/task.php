@@ -10,7 +10,7 @@
             <?php if ($task->deadline < time()) : ?>
                 <del class="task-deadline"><?= $task->getDeadline(); ?></del>
             <?php else: ?>
-                <span class="task-deadline"><?= $task->getDeadline(); ?><span>
+                <span class="task-deadline"><?= $task->getDeadline(); ?></span>
             <?php endif; ?>
         </span>
         <div class="col-md-12">

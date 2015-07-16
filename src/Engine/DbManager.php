@@ -60,7 +60,7 @@ class DbManager
      * Создает новую запись
      *
      * @param string $tableName Название таблицы
-     * @param array  $data      Ассоициативный массив для записи
+     * @param array  $data      Ассоициативный массив данных записи
      *
      * @return int ID записи
      */
@@ -77,6 +77,12 @@ class DbManager
         return $this->connection->lastInsertId();
     }
 
+    /**
+     * Изменяет запись
+     *
+     * @param string $tableName Название таблицы
+     * @param array  $data      Ассоициативный массив данных записи
+     */
     public function update($tableName, $data)
     {
         $id = $data['id'];
@@ -89,7 +95,6 @@ class DbManager
         $sql = 'UPDATE ' . $tableName . ' SET ' . implode(',', $fields) . ' WHERE id=?';
         $sth = $this->connection->prepare($sql);
         $sth->execute(array_merge($values, [$id]));
-
     }
 
     /**
@@ -100,7 +105,7 @@ class DbManager
      */
     public function remove($tableName, $id)
     {
-        $sql = 'DELETE from ' . $tableName . ' WHERE id=?';
+        $sql = 'DELETE FROM ' . $tableName . ' WHERE id=?';
         $sth = $this->connection->prepare($sql);
         $sth->execute([$id]);
     }
