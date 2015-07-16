@@ -4,7 +4,6 @@ namespace TD\Controllers;
 use TD\Engine\APIHelper;
 use TD\Engine\Application;
 use TD\Engine\Auth;
-use TD\Engine\Logger;
 use TD\Exceptions\ApplicationException;
 use TD\Models\Task;
 
@@ -75,7 +74,10 @@ class TaskController extends Controller
         }
     }
 
-    public function remove()
+    /**
+     * Удаляет запись
+     */
+    public function actionRemove()
     {
         Application::$db->remove('task', $_POST['id']);
         APIHelper::success();
