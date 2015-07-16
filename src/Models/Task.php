@@ -65,6 +65,8 @@ class Task extends Model
      */
     public function parseDeadline()
     {
-        $this->deadline = (new \DateTime($this->deadline))->getTimestamp() + 1000;
+        if (!empty($this->deadline)) {
+            $this->deadline = (new \DateTime($this->deadline))->getTimestamp() + 1000;
+        }
     }
 }

@@ -6,7 +6,6 @@
 namespace TD\Models;
 
 use TD\Engine\Application;
-use TD\Engine\Logger;
 use TD\Exceptions\ApplicationException;
 
 /**

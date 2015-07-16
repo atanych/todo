@@ -136,8 +136,8 @@ use TD\Models\Task;
                                         $('#task-modal-error').addClass('fade');
                                     },
                                     'error':   function (data) {
-                                        console.log('e', data);
-                                        $('#task-modal-error').removeClass('fade').html(data.responseJSON.join('<br/>'));
+                                        var errors = JSON.parse(data.responseText);
+                                        $('#task-modal-error').removeClass('fade').html(errors.join('<br/>'));
 
                                     }
                                 });

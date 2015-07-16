@@ -31,8 +31,8 @@ class DbManager
      */
     public function findAll($tableName, $filters = null)
     {
-        //@todo забил жестко сортировку по ID :(
-        $sql = 'SELECT * FROM ' . $tableName . ' ORDER BY id DESC';
+        //@todo забил жестко сортировку по deadline :(
+        $sql = 'SELECT * FROM ' . $tableName . ' ORDER BY deadline DESC';
         $sth = $this->connection->prepare($sql);
         $sth->execute();
         return $sth->fetchAll(PDO::FETCH_CLASS, $this->getClassName(ucfirst($tableName)));
